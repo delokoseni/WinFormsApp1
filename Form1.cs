@@ -1,4 +1,7 @@
+using System;
+using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 namespace WinFormsApp1
 {
@@ -11,6 +14,11 @@ namespace WinFormsApp1
         {
             InitializeComponent();
             buttonBrightness.Click += buttonBrightness_Click; // Подписка на событие нажатия кнопки
+            buttonContrast.Click += buttonContrast_Click; // Подписка на событие для контрастности
+            buttonBinarization.Click += buttonBinarization_Click; // Подписка на событие для бинаризации
+            buttonConvert.Click += buttonConvert_Click; // Подписка на событие для конвертации в серый
+            buttonNegative.Click += buttonNegative_Click; // Подписка на событие для получения негатива
+            buttonReset.Click += buttonReset_Click; // Подписка на событие для сброса эффектов
         }
 
         private void buttonDownload_Click(object sender, EventArgs e)
@@ -31,13 +39,9 @@ namespace WinFormsApp1
         {
             if (_originalImage != null)
             {
-                // Проверяем, является ли введенное значение числом
                 if (int.TryParse(textBoxBrightness.Text, out int brightness))
                 {
-                    // Ограничиваем значение яркости в диапазоне от -100 до 100
                     brightness = Math.Max(-100, Math.Min(100, brightness));
-
-                    // Изменяем яркость изображения
                     _currentImage = AdjustBrightness(_originalImage, brightness);
                     pictureBox.Image = _currentImage; // Обновляем изображение
                 }
@@ -48,52 +52,219 @@ namespace WinFormsApp1
             }
         }
 
-        private unsafe Bitmap AdjustBrightness(Bitmap image, int brightness)
+        private void buttonContrast_Click(object sender, EventArgs e)
         {
-            // Создаем новое изображение с теми же размерами
-            Bitmap adjustedImage = new Bitmap(image.Width, image.Height);
+            if (_originalImage != null)
+            {
+                if (int.TryParse(textContrast.Text, out int contrast))
+                {
+                    contrast = Math.Max(-100, Math.Min(100, contrast));
+                    _currentImage = AdjustContrast(_originalImage, contrast);
+                    pictureBox.Image = _currentImage; // Обновляем изображение
+                }
+                else
+                {
+                    MessageBox.Show("Пожалуйста, введите корректное число для контрастности.");
+                }
+            }
+        }
 
-            // Получаем доступ к пикселям исходного изображения
-            BitmapData originalData = image.LockBits(
-                new Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly,
-                PixelFormat.Format32bppArgb);
+        private void buttonBinarization_Click(object sender, EventArgs e)
+        {
+            if (_originalImage != null)
+            {
+                if (byte.TryParse(textBoxBinarization.Text, out byte threshold))
+                {
+                    _currentImage = Binarization(_originalImage, threshold);
+                    pictureBox.Image = _currentImage; // Обновляем изображение
+                }
+                else
+                {
+                    MessageBox.Show("Пожалуйста, введите корректное значение порога.");
+                }
+            }
+        }
 
-            // Получаем доступ к пикселям нового изображения
-            BitmapData adjustedData = adjustedImage.LockBits(
-                new Rectangle(0, 0, adjustedImage.Width, adjustedImage.Height),
-                ImageLockMode.WriteOnly,
-                PixelFormat.Format32bppArgb);
+        private void buttonConvert_Click(object sender, EventArgs e)
+        {
+            if (_originalImage != null)
+            {
+                _currentImage = ConvertToGrayscale(_originalImage);
+                pictureBox.Image = _currentImage; // Обновляем изображение
+            }
+        }
 
-            // Указатель на начало данных оригинального изображения
+        private unsafe Bitmap ConvertToGrayscale(Bitmap image)
+        {
+            Bitmap grayScaleBitmap = new Bitmap(image.Width, image.Height);
+
+            BitmapData originalData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData grayScaleData = grayScaleBitmap.LockBits(new Rectangle(0, 0, grayScaleBitmap.Width, grayScaleBitmap.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
             byte* originalPtr = (byte*)originalData.Scan0.ToPointer();
+            byte* grayScalePtr = (byte*)grayScaleData.Scan0.ToPointer();
 
-            // Указатель на начало данных измененного изображения
-            byte* adjustedPtr = (byte*)adjustedData.Scan0.ToPointer();
-
-            // Преобразуем значение яркости в диапазон от -1 до 1
-            float b = brightness / 100f;
-
-            // Проходим по всем пикселям
             for (int i = 0; i < originalData.Stride * image.Height; i += 4)
             {
-                // Получаем значения RGB для текущего пикселя
+                byte gray = (byte)(.299 * originalPtr[i + 2] + .587 * originalPtr[i + 1] + .114 * originalPtr[i]);
+                grayScalePtr[i] = gray;         // Blue
+                grayScalePtr[i + 1] = gray;       // Green
+                grayScalePtr[i + 2] = gray;       // Red 
+                grayScalePtr[i + 3] = 255;         // Alpha 
+            }
+
+            image.UnlockBits(originalData);
+            grayScaleBitmap.UnlockBits(grayScaleData);
+
+            return grayScaleBitmap;
+        }
+
+        private void buttonNegative_Click(object sender, EventArgs e)
+        {
+            if (_originalImage != null)
+            {
+                _currentImage = GetNegative(_originalImage);
+                pictureBox.Image = _currentImage; // Обновляем изображение
+            }
+        }
+
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            if (_originalImage != null)
+            {
+                _currentImage = new Bitmap(_originalImage); // Возвращаемся к оригиналу
+                pictureBox.Image = _currentImage;
+
+                // Сбрасываем значения в текстовых полях (если есть)
+                textBoxBrightness.Text = "0";
+                textContrast.Text = "0";
+                textBoxBinarization.Text = "0";
+
+            }
+        }
+
+        private unsafe Bitmap AdjustBrightness(Bitmap image, int brightness)
+        {
+            Bitmap adjustedImage = new Bitmap(image.Width, image.Height);
+            BitmapData originalData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData adjustedData = adjustedImage.LockBits(new Rectangle(0, 0, adjustedImage.Width, adjustedImage.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            byte* originalPtr = (byte*)originalData.Scan0.ToPointer();
+            byte* adjustedPtr = (byte*)adjustedData.Scan0.ToPointer();
+
+            float b = brightness / 100f;
+
+            for (int i = 0; i < originalData.Stride * image.Height; i += 4)
+            {
                 int r = Clamp((int)((originalPtr[i]) * (1 + b)));
                 int g = Clamp((int)((originalPtr[i + 1]) * (1 + b)));
                 int bValue = Clamp((int)((originalPtr[i + 2]) * (1 + b)));
 
-                // Устанавливаем новые значения RGB для изменённого пикселя
                 adjustedPtr[i] = (byte)r;
                 adjustedPtr[i + 1] = (byte)g;
                 adjustedPtr[i + 2] = (byte)bValue;
-                adjustedPtr[i + 3] = 255; // Оставляем альфа-канал без изменений
+                adjustedPtr[i + 3] = 255; // Альфа-канал без изменений
             }
 
-            // Освобождаем заблокированные ресурсы
             image.UnlockBits(originalData);
             adjustedImage.UnlockBits(adjustedData);
 
             return adjustedImage;
+        }
+
+        private unsafe Bitmap AdjustContrast(Bitmap image, int contrast)
+        {
+            Bitmap adjustedImage = new Bitmap(image.Width, image.Height);
+
+            BitmapData originalData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData adjustedData = adjustedImage.LockBits(new Rectangle(0, 0, adjustedImage.Width, adjustedImage.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            byte* originalPtr = (byte*)originalData.Scan0.ToPointer();
+            byte* adjustedPtr = (byte*)adjustedData.Scan0.ToPointer();
+
+            double factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+            for (int i = 0; i < originalData.Stride * image.Height; i += 4)
+            {
+                for (int j = 0; j < 3; j++) // RGB компоненты
+                {
+                    double newValue = factor * ((originalPtr[i + j]) - 128) + 128;
+                    adjustedPtr[i + j] = (byte)Clamp((int)newValue);
+                }
+
+                adjustedPtr[i + 3] = originalPtr[i + 3]; // Альфа-канал без изменений
+            }
+
+            image.UnlockBits(originalData);
+            adjustedImage.UnlockBits(adjustedData);
+
+            return adjustedImage;
+        }
+
+        private unsafe Bitmap Binarization(Bitmap image, byte threshold)
+        {
+            Bitmap binarizedImage = new Bitmap(image.Width, image.Height);
+
+            BitmapData originalData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData binarizedData = binarizedImage.LockBits(new Rectangle(0, 0, binarizedImage.Width, binarizedImage.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            byte* originalPtr = (byte*)originalData.Scan0.ToPointer();
+            byte* binarizedPtr = (byte*)binarizedData.Scan0.ToPointer();
+
+            for (int i = 0; i < originalData.Stride * image.Height; i += 4)
+            {
+                byte grayValue = (byte)((0.299 * originalPtr[i + 2]) + (0.587 * originalPtr[i + 1]) + (0.114 * originalPtr[i]));
+
+                byte binaryValue = grayValue < threshold ? (byte)0 : (byte)255;
+
+                binarizedPtr[i] = binaryValue;         // Blue
+                binarizedPtr[i + 1] = binaryValue;         // Green
+                binarizedPtr[i + 2] = binaryValue;         // Red
+                binarizedPtr[i + 3] = originalPtr[i + 3]; // Альфа-канал без изменений
+            }
+
+            image.UnlockBits(originalData);
+            binarizedImage.UnlockBits(binarizedData);
+
+            return binarizedImage;
+        }
+
+        private unsafe Bitmap GetNegative(Bitmap image)
+        {
+            Bitmap negativeImage = new Bitmap(image.Width, image.Height);
+
+            BitmapData originalData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            BitmapData negativeData = negativeImage.LockBits(new Rectangle(0, 0, negativeImage.Width, negativeImage.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
+
+            byte* originalPtr = (byte*)originalData.Scan0.ToPointer();
+            byte* negativePtr = (byte*)negativeData.Scan0.ToPointer();
+
+            for (int i = 0; i < originalData.Stride * image.Height; i += 4)
+            {
+                negativePtr[i] = (byte)(255 - originalPtr[i]);          // Blue
+                negativePtr[i + 1] = (byte)(255 - originalPtr[i + 1]);    // Green
+                negativePtr[i + 2] = (byte)(255 - originalPtr[i + 2]);    // Red 
+                negativePtr[i + 3] = originalPtr[i + 3];                 // Alpha 
+            }
+
+            image.UnlockBits(originalData);
+            negativeImage.UnlockBits(negativeData);
+
+            return negativeImage;
+        }
+
+        private void ResetEffects()
+        {
+            if (_originalImage != null)
+            {
+                _currentImage.Dispose();
+                _currentImage = new Bitmap(_originalImage);
+                pictureBox.Image = _currentImage;
+
+                textBoxBrightness.Text = "0";
+                textContrast.Text = "0";
+                textBoxBinarization.Text = "128";
+            }
         }
 
         private int Clamp(int value)
