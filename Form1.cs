@@ -288,16 +288,33 @@ namespace WinFormsApp1
             int width = bitmap.Width;
             int height = bitmap.Height;
 
-            // Заполнение массива гистограммы
-            for (int y = 0; y < height; y++)
+            // Использование LockBits для повышения скорости доступа к пикселям
+            BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height),
+                                                     ImageLockMode.ReadOnly,
+                                                     bitmap.PixelFormat);
+
+            unsafe
             {
-                for (int x = 0; x < width; x++)
+                byte* ptr = (byte*)bitmapData.Scan0; // Указатель на данных пикселей
+                int bytesPerPixel = Bitmap.GetPixelFormatSize(bitmap.PixelFormat) / 8;
+
+                for (int y = 0; y < height; y++)
                 {
-                    Color pixelColor = bitmap.GetPixel(x, y);
-                    byte brightness = (byte)((.299 * pixelColor.R) + (.587 * pixelColor.G) + (.114 * pixelColor.B));
-                    histogram[brightness]++;
+                    for (int x = 0; x < width; x++)
+                    {
+                        int pixelIndex = (y * bitmapData.Stride) + (x * bytesPerPixel);
+                        byte R = ptr[pixelIndex + 2]; // Красный
+                        byte G = ptr[pixelIndex + 1]; // Зеленый
+                        byte B = ptr[pixelIndex]; // Синий
+
+                        byte brightness = (byte)((0.299 * R) + (0.587 * G) + (0.114 * B));
+                        histogram[brightness]++;
+                    }
                 }
             }
+
+            // Освобождение ресурсов
+            bitmap.UnlockBits(bitmapData);
 
             return histogram;
         }
@@ -311,15 +328,18 @@ namespace WinFormsApp1
             using (Graphics g = Graphics.FromImage(histogramBitmap))
             {
                 g.Clear(Color.White);
-                int maxFrequency = histogram.Max();
+                int maxFrequency = histogram.Max(); // Находим максимальную частоту
+
                 for (int i = 0; i < histogram.Length; i++)
                 {
                     int barHeight = (int)((double)histogram[i] / maxFrequency * histogramHeight);
                     g.FillRectangle(Brushes.Blue, i * (histogramWidth / histogram.Length), histogramHeight - barHeight, histogramWidth / histogram.Length, barHeight);
                 }
             }
+
             pictureBoxHistogram.Image = histogramBitmap;
         }
+
 
     }
 }
