@@ -7,8 +7,8 @@ namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        private Bitmap _originalImage; // Оригинальное изображение
-        private Bitmap _currentImage;  // Текущее изображение
+        private Bitmap originalImage; // Оригинальное изображение
+        private Bitmap currentImage;  // Текущее изображение
 
         public Form1()
         {
@@ -29,22 +29,26 @@ namespace WinFormsApp1
                 openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;";
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _originalImage = new Bitmap(openFileDialog.FileName);
-                    _currentImage = new Bitmap(_originalImage); // Начинаем с оригинала
-                    pictureBox.Image = _currentImage; // Отображаем изображение
+                    originalImage = new Bitmap(openFileDialog.FileName);
+                    currentImage = new Bitmap(originalImage); 
+                    pictureBox.Image = currentImage;
+                    int[] histogram = CalculateHistogram(currentImage);
+                    DrawHistogram(histogram);
                 }
             }
         }
 
         private void buttonBrightness_Click(object sender, EventArgs e)
         {
-            if (_originalImage != null)
+            if (originalImage != null)
             {
                 if (int.TryParse(textBoxBrightness.Text, out int brightness))
                 {
                     brightness = Math.Max(-100, Math.Min(100, brightness));
-                    _currentImage = AdjustBrightness(_originalImage, brightness);
-                    pictureBox.Image = _currentImage; // Обновляем изображение
+                    currentImage = AdjustBrightness(originalImage, brightness);
+                    pictureBox.Image = currentImage;
+                    int[] histogram = CalculateHistogram(currentImage);
+                    DrawHistogram(histogram);
                 }
                 else
                 {
@@ -55,13 +59,15 @@ namespace WinFormsApp1
 
         private void buttonContrast_Click(object sender, EventArgs e)
         {
-            if (_originalImage != null)
+            if (originalImage != null)
             {
                 if (int.TryParse(textContrast.Text, out int contrast))
                 {
                     contrast = Math.Max(-100, Math.Min(100, contrast));
-                    _currentImage = AdjustContrast(_originalImage, contrast);
-                    pictureBox.Image = _currentImage; // Обновляем изображение
+                    currentImage = AdjustContrast(originalImage, contrast);
+                    pictureBox.Image = currentImage;
+                    int[] histogram = CalculateHistogram(currentImage);
+                    DrawHistogram(histogram);
                 }
                 else
                 {
@@ -72,12 +78,14 @@ namespace WinFormsApp1
 
         private void buttonBinarization_Click(object sender, EventArgs e)
         {
-            if (_originalImage != null)
+            if (originalImage != null)
             {
                 if (byte.TryParse(textBoxBinarization.Text, out byte threshold))
                 {
-                    _currentImage = Binarization(_originalImage, threshold);
-                    pictureBox.Image = _currentImage; // Обновляем изображение
+                    currentImage = Binarization(originalImage, threshold);
+                    pictureBox.Image = currentImage;
+                    int[] histogram = CalculateHistogram(currentImage);
+                    DrawHistogram(histogram);
                 }
                 else
                 {
@@ -88,10 +96,12 @@ namespace WinFormsApp1
 
         private void buttonConvert_Click(object sender, EventArgs e)
         {
-            if (_originalImage != null)
+            if (originalImage != null)
             {
-                _currentImage = ConvertToGrayscale(_originalImage);
-                pictureBox.Image = _currentImage; // Обновляем изображение
+                currentImage = ConvertToGrayscale(originalImage);
+                pictureBox.Image = currentImage;
+                int[] histogram = CalculateHistogram(currentImage);
+                DrawHistogram(histogram);
             }
         }
 
@@ -122,25 +132,28 @@ namespace WinFormsApp1
 
         private void buttonNegative_Click(object sender, EventArgs e)
         {
-            if (_originalImage != null)
+            if (originalImage != null)
             {
-                _currentImage = GetNegative(_originalImage);
-                pictureBox.Image = _currentImage; // Обновляем изображение
+                currentImage = GetNegative(originalImage);
+                pictureBox.Image = currentImage;
+                int[] histogram = CalculateHistogram(currentImage);
+                DrawHistogram(histogram);
             }
         }
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            if (_originalImage != null)
+            if (originalImage != null)
             {
-                _currentImage = new Bitmap(_originalImage); // Возвращаемся к оригиналу
-                pictureBox.Image = _currentImage;
+                currentImage = new Bitmap(originalImage); 
+                pictureBox.Image = currentImage;
 
                 // Сбрасываем значения в текстовых полях (если есть)
                 textBoxBrightness.Text = "0";
                 textContrast.Text = "0";
                 textBoxBinarization.Text = "0";
-
+                int[] histogram = CalculateHistogram(currentImage);
+                DrawHistogram(histogram);
             }
         }
 
@@ -254,20 +267,6 @@ namespace WinFormsApp1
             return negativeImage;
         }
 
-        private void ResetEffects()
-        {
-            if (_originalImage != null)
-            {
-                _currentImage.Dispose();
-                _currentImage = new Bitmap(_originalImage);
-                pictureBox.Image = _currentImage;
-
-                textBoxBrightness.Text = "0";
-                textContrast.Text = "0";
-                textBoxBinarization.Text = "128";
-            }
-        }
-
         private int Clamp(int value)
         {
             return Math.Max(0, Math.Min(255, value));
@@ -275,9 +274,9 @@ namespace WinFormsApp1
 
         private void buttonShowHistogram_Click(object sender, EventArgs e)
         {
-            if (_currentImage != null)
+            if (currentImage != null)
             {
-                int[] histogram = CalculateHistogram(_currentImage);
+                int[] histogram = CalculateHistogram(currentImage);
                 DrawHistogram(histogram);
             }
         }
@@ -339,7 +338,5 @@ namespace WinFormsApp1
 
             pictureBoxHistogram.Image = histogramBitmap;
         }
-
-
     }
 }
