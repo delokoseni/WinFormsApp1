@@ -105,6 +105,33 @@ namespace WinFormsApp1
             }
         }
 
+        private void buttonNegative_Click(object sender, EventArgs e)
+        {
+            if (originalImage != null)
+            {
+                currentImage = GetNegative(originalImage);
+                pictureBox.Image = currentImage;
+                int[] histogram = CalculateHistogram(currentImage);
+                DrawHistogram(histogram);
+            }
+        }
+
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            if (originalImage != null)
+            {
+                currentImage = new Bitmap(originalImage);
+                pictureBox.Image = currentImage;
+
+                // Сбрасываем значения в текстовых полях (если есть)
+                textBoxBrightness.Text = "0";
+                textContrast.Text = "0";
+                textBoxBinarization.Text = "0";
+                int[] histogram = CalculateHistogram(currentImage);
+                DrawHistogram(histogram);
+            }
+        }
+
         private unsafe Bitmap ConvertToGrayscale(Bitmap image)
         {
             Bitmap grayScaleBitmap = new Bitmap(image.Width, image.Height);
@@ -130,33 +157,6 @@ namespace WinFormsApp1
             return grayScaleBitmap;
         }
 
-        private void buttonNegative_Click(object sender, EventArgs e)
-        {
-            if (originalImage != null)
-            {
-                currentImage = GetNegative(originalImage);
-                pictureBox.Image = currentImage;
-                int[] histogram = CalculateHistogram(currentImage);
-                DrawHistogram(histogram);
-            }
-        }
-
-        private void buttonReset_Click(object sender, EventArgs e)
-        {
-            if (originalImage != null)
-            {
-                currentImage = new Bitmap(originalImage); 
-                pictureBox.Image = currentImage;
-
-                // Сбрасываем значения в текстовых полях (если есть)
-                textBoxBrightness.Text = "0";
-                textContrast.Text = "0";
-                textBoxBinarization.Text = "0";
-                int[] histogram = CalculateHistogram(currentImage);
-                DrawHistogram(histogram);
-            }
-        }
-
         private unsafe Bitmap AdjustBrightness(Bitmap image, int brightness)
         {
             Bitmap adjustedImage = new Bitmap(image.Width, image.Height);
@@ -166,7 +166,7 @@ namespace WinFormsApp1
             byte* originalPtr = (byte*)originalData.Scan0.ToPointer();
             byte* adjustedPtr = (byte*)adjustedData.Scan0.ToPointer();
 
-            float b = brightness / 100f;
+            float b = brightness / 255f;
 
             for (int i = 0; i < originalData.Stride * image.Height; i += 4)
             {
