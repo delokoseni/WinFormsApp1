@@ -42,7 +42,10 @@
             buttonConvert = new Button();
             buttonNegative = new Button();
             buttonReset = new Button();
+            pictureBoxHistogram = new PictureBox();
+            buttonShowHistogram = new Button();
             ((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxHistogram).BeginInit();
             SuspendLayout();
             // 
             // buttonDownload
@@ -174,11 +177,31 @@
             buttonReset.UseVisualStyleBackColor = true;
             buttonReset.Click += buttonReset_Click;
             // 
+            // pictureBoxHistogram
+            // 
+            pictureBoxHistogram.Location = new Point(470, 432);
+            pictureBoxHistogram.Name = "pictureBoxHistogram";
+            pictureBoxHistogram.Size = new Size(400, 400);
+            pictureBoxHistogram.TabIndex = 15;
+            pictureBoxHistogram.TabStop = false;
+            // 
+            // buttonShowHistogram
+            // 
+            buttonShowHistogram.Location = new Point(15, 341);
+            buttonShowHistogram.Name = "buttonShowHistogram";
+            buttonShowHistogram.Size = new Size(154, 53);
+            buttonShowHistogram.TabIndex = 16;
+            buttonShowHistogram.Text = "Гистограмма";
+            buttonShowHistogram.UseVisualStyleBackColor = true;
+            buttonShowHistogram.Click += buttonShowHistogram_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(882, 453);
+            ClientSize = new Size(882, 853);
+            Controls.Add(buttonShowHistogram);
+            Controls.Add(pictureBoxHistogram);
             Controls.Add(buttonReset);
             Controls.Add(buttonNegative);
             Controls.Add(buttonConvert);
@@ -196,6 +219,7 @@
             Name = "Form1";
             Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBoxHistogram).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -216,5 +240,7 @@
         private Button buttonConvert;
         private Button buttonNegative;
         private Button buttonReset;
+        private PictureBox pictureBoxHistogram;
+        private Button buttonShowHistogram;
     }
 }

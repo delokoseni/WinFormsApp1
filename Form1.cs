@@ -19,6 +19,7 @@ namespace WinFormsApp1
             buttonConvert.Click += buttonConvert_Click; // Подписка на событие для конвертации в серый
             buttonNegative.Click += buttonNegative_Click; // Подписка на событие для получения негатива
             buttonReset.Click += buttonReset_Click; // Подписка на событие для сброса эффектов
+            buttonShowHistogram.Click += buttonShowHistogram_Click;
         }
 
         private void buttonDownload_Click(object sender, EventArgs e)
@@ -271,5 +272,54 @@ namespace WinFormsApp1
         {
             return Math.Max(0, Math.Min(255, value));
         }
+
+        private void buttonShowHistogram_Click(object sender, EventArgs e)
+        {
+            if (_currentImage != null)
+            {
+                int[] histogram = CalculateHistogram(_currentImage);
+                DrawHistogram(histogram);
+            }
+        }
+
+        private int[] CalculateHistogram(Bitmap bitmap)
+        {
+            int[] histogram = new int[256];
+            int width = bitmap.Width;
+            int height = bitmap.Height;
+
+            // Заполнение массива гистограммы
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Color pixelColor = bitmap.GetPixel(x, y);
+                    byte brightness = (byte)((.299 * pixelColor.R) + (.587 * pixelColor.G) + (.114 * pixelColor.B));
+                    histogram[brightness]++;
+                }
+            }
+
+            return histogram;
+        }
+
+        private void DrawHistogram(int[] histogram)
+        {
+            int histogramWidth = pictureBoxHistogram.Width;
+            int histogramHeight = pictureBoxHistogram.Height;
+
+            Bitmap histogramBitmap = new Bitmap(histogramWidth, histogramHeight);
+            using (Graphics g = Graphics.FromImage(histogramBitmap))
+            {
+                g.Clear(Color.White);
+                int maxFrequency = histogram.Max();
+                for (int i = 0; i < histogram.Length; i++)
+                {
+                    int barHeight = (int)((double)histogram[i] / maxFrequency * histogramHeight);
+                    g.FillRectangle(Brushes.Blue, i * (histogramWidth / histogram.Length), histogramHeight - barHeight, histogramWidth / histogram.Length, barHeight);
+                }
+            }
+            pictureBoxHistogram.Image = histogramBitmap;
+        }
+
     }
 }
