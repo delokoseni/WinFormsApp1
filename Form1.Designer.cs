@@ -60,9 +60,9 @@
             // 
             // pictureBox
             // 
-            pictureBox.Location = new Point(470, 12);
+            pictureBox.Location = new Point(570, 9);
             pictureBox.Name = "pictureBox";
-            pictureBox.Size = new Size(400, 400);
+            pictureBox.Size = new Size(500, 500);
             pictureBox.TabIndex = 2;
             pictureBox.TabStop = false;
             // 
@@ -179,9 +179,9 @@
             // 
             // pictureBoxHistogram
             // 
-            pictureBoxHistogram.Location = new Point(470, 432);
+            pictureBoxHistogram.Location = new Point(15, 410);
             pictureBoxHistogram.Name = "pictureBoxHistogram";
-            pictureBoxHistogram.Size = new Size(400, 400);
+            pictureBoxHistogram.Size = new Size(500, 500);
             pictureBoxHistogram.TabIndex = 15;
             pictureBoxHistogram.TabStop = false;
             // 
@@ -199,7 +199,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(882, 853);
+            ClientSize = new Size(1082, 923);
             Controls.Add(buttonShowHistogram);
             Controls.Add(pictureBoxHistogram);
             Controls.Add(buttonReset);

@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
@@ -7,19 +7,19 @@ namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        private Bitmap _originalImage; // Оригинальное изображение
-        private Bitmap _currentImage;
+        private Bitmap _originalImage; // РћСЂРёРіРёРЅР°Р»СЊРЅРѕРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
+        private Bitmap _currentImage;  // РўРµРєСѓС‰РµРµ РёР·РѕР±СЂР°Р¶РµРЅРёРµ
 
         public Form1()
         {
             InitializeComponent();
-            buttonBrightness.Click += buttonBrightness_Click; // Подписка на событие нажатия кнопки
-            buttonContrast.Click += buttonContrast_Click; // Подписка на событие для контрастности
-            buttonBinarization.Click += buttonBinarization_Click; // Подписка на событие для бинаризации
-            buttonConvert.Click += buttonConvert_Click; // Подписка на событие для конвертации в серый
-            buttonNegative.Click += buttonNegative_Click; // Подписка на событие для получения негатива
-            buttonReset.Click += buttonReset_Click; // Подписка на событие для сброса эффектов
-            buttonShowHistogram.Click += buttonShowHistogram_Click;
+            buttonBrightness.Click += buttonBrightness_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё
+            buttonContrast.Click += buttonContrast_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РґР»СЏ РєРѕРЅС‚СЂР°СЃС‚РЅРѕСЃС‚Рё
+            buttonBinarization.Click += buttonBinarization_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РґР»СЏ Р±РёРЅР°СЂРёР·Р°С†РёРё
+            buttonConvert.Click += buttonConvert_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РґР»СЏ РєРѕРЅРІРµСЂС‚Р°С†РёРё РІ СЃРµСЂС‹Р№
+            buttonNegative.Click += buttonNegative_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РЅРµРіР°С‚РёРІР°
+            buttonReset.Click += buttonReset_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РґР»СЏ СЃР±СЂРѕСЃР° СЌС„С„РµРєС‚РѕРІ
+            buttonShowHistogram.Click += buttonShowHistogram_Click; // РџРѕРґРїРёСЃРєР° РЅР° СЃРѕР±С‹С‚РёРµ РґР»СЏ СЃР±СЂРѕСЃР° СЌС„С„РµРєС‚РѕРІ
         }
 
         private void buttonDownload_Click(object sender, EventArgs e)
@@ -30,8 +30,8 @@ namespace WinFormsApp1
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     _originalImage = new Bitmap(openFileDialog.FileName);
-                    _currentImage = new Bitmap(_originalImage); // Начинаем с оригинала
-                    pictureBox.Image = _currentImage; // Отображаем изображение
+                    _currentImage = new Bitmap(_originalImage); // РќР°С‡РёРЅР°РµРј СЃ РѕСЂРёРіРёРЅР°Р»Р°
+                    pictureBox.Image = _currentImage; // РћС‚РѕР±СЂР°Р¶Р°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
                 }
             }
         }
@@ -44,11 +44,11 @@ namespace WinFormsApp1
                 {
                     brightness = Math.Max(-100, Math.Min(100, brightness));
                     _currentImage = AdjustBrightness(_originalImage, brightness);
-                    pictureBox.Image = _currentImage; // Обновляем изображение
+                    pictureBox.Image = _currentImage; // РћР±РЅРѕРІР»СЏРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
                 }
                 else
                 {
-                    MessageBox.Show("Пожалуйста, введите корректное число для яркости.");
+                    MessageBox.Show("РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅРѕРµ С‡РёСЃР»Рѕ РґР»СЏ СЏСЂРєРѕСЃС‚Рё.");
                 }
             }
         }
@@ -61,11 +61,11 @@ namespace WinFormsApp1
                 {
                     contrast = Math.Max(-100, Math.Min(100, contrast));
                     _currentImage = AdjustContrast(_originalImage, contrast);
-                    pictureBox.Image = _currentImage; // Обновляем изображение
+                    pictureBox.Image = _currentImage; // РћР±РЅРѕРІР»СЏРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
                 }
                 else
                 {
-                    MessageBox.Show("Пожалуйста, введите корректное число для контрастности.");
+                    MessageBox.Show("РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅРѕРµ С‡РёСЃР»Рѕ РґР»СЏ РєРѕРЅС‚СЂР°СЃС‚РЅРѕСЃС‚Рё.");
                 }
             }
         }
@@ -77,11 +77,11 @@ namespace WinFormsApp1
                 if (byte.TryParse(textBoxBinarization.Text, out byte threshold))
                 {
                     _currentImage = Binarization(_originalImage, threshold);
-                    pictureBox.Image = _currentImage; // Обновляем изображение
+                    pictureBox.Image = _currentImage; // РћР±РЅРѕРІР»СЏРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
                 }
                 else
                 {
-                    MessageBox.Show("Пожалуйста, введите корректное значение порога.");
+                    MessageBox.Show("РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїРѕСЂРѕРіР°.");
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace WinFormsApp1
             if (_originalImage != null)
             {
                 _currentImage = ConvertToGrayscale(_originalImage);
-                pictureBox.Image = _currentImage; // Обновляем изображение
+                pictureBox.Image = _currentImage; // РћР±РЅРѕРІР»СЏРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
             }
         }
 
@@ -125,7 +125,7 @@ namespace WinFormsApp1
             if (_originalImage != null)
             {
                 _currentImage = GetNegative(_originalImage);
-                pictureBox.Image = _currentImage; // Обновляем изображение
+                pictureBox.Image = _currentImage; // РћР±РЅРѕРІР»СЏРµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ
             }
         }
 
@@ -133,10 +133,10 @@ namespace WinFormsApp1
         {
             if (_originalImage != null)
             {
-                _currentImage = new Bitmap(_originalImage); // Возвращаемся к оригиналу
+                _currentImage = new Bitmap(_originalImage); // Р’РѕР·РІСЂР°С‰Р°РµРјСЃСЏ Рє РѕСЂРёРіРёРЅР°Р»Сѓ
                 pictureBox.Image = _currentImage;
 
-                // Сбрасываем значения в текстовых полях (если есть)
+                // РЎР±СЂР°СЃС‹РІР°РµРј Р·РЅР°С‡РµРЅРёСЏ РІ С‚РµРєСЃС‚РѕРІС‹С… РїРѕР»СЏС… (РµСЃР»Рё РµСЃС‚СЊ)
                 textBoxBrightness.Text = "0";
                 textContrast.Text = "0";
                 textBoxBinarization.Text = "0";
@@ -164,7 +164,7 @@ namespace WinFormsApp1
                 adjustedPtr[i] = (byte)r;
                 adjustedPtr[i + 1] = (byte)g;
                 adjustedPtr[i + 2] = (byte)bValue;
-                adjustedPtr[i + 3] = 255; // Альфа-канал без изменений
+                adjustedPtr[i + 3] = 255; // РђР»СЊС„Р°-РєР°РЅР°Р» Р±РµР· РёР·РјРµРЅРµРЅРёР№
             }
 
             image.UnlockBits(originalData);
@@ -187,13 +187,13 @@ namespace WinFormsApp1
 
             for (int i = 0; i < originalData.Stride * image.Height; i += 4)
             {
-                for (int j = 0; j < 3; j++) // RGB компоненты
+                for (int j = 0; j < 3; j++) // RGB РєРѕРјРїРѕРЅРµРЅС‚С‹
                 {
                     double newValue = factor * ((originalPtr[i + j]) - 128) + 128;
                     adjustedPtr[i + j] = (byte)Clamp((int)newValue);
                 }
 
-                adjustedPtr[i + 3] = originalPtr[i + 3]; // Альфа-канал без изменений
+                adjustedPtr[i + 3] = originalPtr[i + 3]; // РђР»СЊС„Р°-РєР°РЅР°Р» Р±РµР· РёР·РјРµРЅРµРЅРёР№
             }
 
             image.UnlockBits(originalData);
@@ -221,7 +221,7 @@ namespace WinFormsApp1
                 binarizedPtr[i] = binaryValue;         // Blue
                 binarizedPtr[i + 1] = binaryValue;         // Green
                 binarizedPtr[i + 2] = binaryValue;         // Red
-                binarizedPtr[i + 3] = originalPtr[i + 3]; // Альфа-канал без изменений
+                binarizedPtr[i + 3] = originalPtr[i + 3]; // РђР»СЊС„Р°-РєР°РЅР°Р» Р±РµР· РёР·РјРµРЅРµРЅРёР№
             }
 
             image.UnlockBits(originalData);
@@ -288,14 +288,14 @@ namespace WinFormsApp1
             int width = bitmap.Width;
             int height = bitmap.Height;
 
-            // Использование LockBits для повышения скорости доступа к пикселям
+            // РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ LockBits РґР»СЏ РїРѕРІС‹С€РµРЅРёСЏ СЃРєРѕСЂРѕСЃС‚Рё РґРѕСЃС‚СѓРїР° Рє РїРёРєСЃРµР»СЏРј
             BitmapData bitmapData = bitmap.LockBits(new Rectangle(0, 0, width, height),
                                                      ImageLockMode.ReadOnly,
                                                      bitmap.PixelFormat);
 
             unsafe
             {
-                byte* ptr = (byte*)bitmapData.Scan0; // Указатель на данных пикселей
+                byte* ptr = (byte*)bitmapData.Scan0; // РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РґР°РЅРЅС‹С… РїРёРєСЃРµР»РµР№
                 int bytesPerPixel = Bitmap.GetPixelFormatSize(bitmap.PixelFormat) / 8;
 
                 for (int y = 0; y < height; y++)
@@ -303,9 +303,9 @@ namespace WinFormsApp1
                     for (int x = 0; x < width; x++)
                     {
                         int pixelIndex = (y * bitmapData.Stride) + (x * bytesPerPixel);
-                        byte R = ptr[pixelIndex + 2]; // Красный
-                        byte G = ptr[pixelIndex + 1]; // Зеленый
-                        byte B = ptr[pixelIndex]; // Синий
+                        byte R = ptr[pixelIndex + 2]; // РљСЂР°СЃРЅС‹Р№
+                        byte G = ptr[pixelIndex + 1]; // Р—РµР»РµРЅС‹Р№
+                        byte B = ptr[pixelIndex]; // РЎРёРЅРёР№
 
                         byte brightness = (byte)((0.299 * R) + (0.587 * G) + (0.114 * B));
                         histogram[brightness]++;
@@ -313,7 +313,7 @@ namespace WinFormsApp1
                 }
             }
 
-            // Освобождение ресурсов
+            // РћСЃРІРѕР±РѕР¶РґРµРЅРёРµ СЂРµСЃСѓСЂСЃРѕРІ
             bitmap.UnlockBits(bitmapData);
 
             return histogram;
@@ -328,7 +328,7 @@ namespace WinFormsApp1
             using (Graphics g = Graphics.FromImage(histogramBitmap))
             {
                 g.Clear(Color.White);
-                int maxFrequency = histogram.Max(); // Находим максимальную частоту
+                int maxFrequency = histogram.Max(); // РќР°С…РѕРґРёРј РјР°РєСЃРёРјР°Р»СЊРЅСѓСЋ С‡Р°СЃС‚РѕС‚Сѓ
 
                 for (int i = 0; i < histogram.Length; i++)
                 {
