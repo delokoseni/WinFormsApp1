@@ -44,7 +44,7 @@ namespace WinFormsApp1
             {
                 if (int.TryParse(textBoxBrightness.Text, out int brightness))
                 {
-                    brightness = Math.Max(-100, Math.Min(100, brightness));
+                    brightness = Math.Max(-255, Math.Min(255, brightness));
                     currentImage = AdjustBrightness(originalImage, brightness);
                     pictureBox.Image = currentImage;
                     int[] histogram = CalculateHistogram(currentImage);
@@ -63,7 +63,7 @@ namespace WinFormsApp1
             {
                 if (int.TryParse(textContrast.Text, out int contrast))
                 {
-                    contrast = Math.Max(-100, Math.Min(100, contrast));
+                    contrast = Math.Max(-255, Math.Min(255, contrast));
                     currentImage = AdjustContrast(originalImage, contrast);
                     pictureBox.Image = currentImage;
                     int[] histogram = CalculateHistogram(currentImage);
